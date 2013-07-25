@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project default="all" name="RegistrarTelcoService">
+    <target name="init">
+        <path id="slee">
+            <pathelement location="lib/slee.jar"/>
+        </path>
+        <taskdef classname="org.mobicents.eclipslee.ant.SbbJar"
+            classpath="lib/slee-tasks.jar" name="sbbjar"/>
+        <taskdef classname="org.mobicents.eclipslee.ant.EventJar"
+            classpath="lib/slee-tasks.jar" name="eventjar"/>
+        <taskdef classname="org.mobicents.eclipslee.ant.ProfileSpecJar"
+            classpath="lib/slee-tasks.jar" name="profilespecjar"/>
+        <taskdef classname="org.mobicents.eclipslee.ant.DeployableJar"
+            classpath="lib/slee-tasks.jar" name="deployablejar"/>
+        <taskdef
+            classname="org.mobicents.eclipslee.ant.ResourceAdaptorTypeJar"
+            classpath="lib/slee-tasks.jar" name="resourceadaptortypejar"/>
+        <taskdef
+            classname="org.mobicents.eclipslee.ant.ResourceAdaptorJar"
+            classpath="lib/slee-tasks.jar" name="resourceadaptorjar"/>
+        <path id="ExternalComponents">
+            <pathelement location="lib/DU/sip11-ra-DU-2.6.0.FINAL-Eclipslee.jar/jars/jain-sip-api-1.2.jar"/>
+            <pathelement location="lib/DU/sip11-ra-DU-2.6.0.FINAL-Eclipslee.jar/jars/jain-sip-ri-1.2.164.jar"/>
+            <pathelement location="lib/DU/sip11-ra-DU-2.6.0.FINAL-Eclipslee.jar/jars/sip11-events-2.6.0.FINAL.jar"/>
+            <pathelement location="lib/DU/sip11-ra-DU-2.6.0.FINAL-Eclipslee.jar/jars/sip11-library-2.6.0.FINAL.jar"/>
+            <pathelement location="lib/DU/sip11-ra-DU-2.6.0.FINAL-Eclipslee.jar/jars/sip11-ra-2.6.0.FINAL.jar"/>
+            <pathelement location="lib/DU/sip11-ra-DU-2.6.0.FINAL-Eclipslee.jar/jars/sip11-ratype-2.6.0.FINAL.jar"/>
+         	<pathelement location="/home/julian/Telcomp-Workspace/DataAccessService/jars/StartSetDataTelcoService-event.jar"/>
+        	<pathelement location="/home/julian/Telcomp-Workspace/DataAccessService/jars/EndSetDataTelcoService-event.jar"/>
+        </path>
+        
+        <path id="path-Registrar-sbb">
+            <pathelement location="/home/julian/Telcomp-Workspace/RegistrarTelcoService/jars/EndRegistrarTelcoService-event.jar"/>
+            <pathelement location="/home/julian/Telcomp-Workspace/RegistrarTelcoService/lib/DU/sip11-ra-DU-2.6.0.FINAL-Eclipslee.jar/jars/sip11-events-2.6.0.FINAL.jar"/>
+        </path>
+    </target>
+    <target depends="init" name="all">
+        <ant target="build-EndRegistrarTelcoService-event"/>
+        <ant target="build-Registrar-sbb"/>
+        <ant target="build-registrar-DU"/>
+    </target>
+    <target depends="init" name="clean">
+        <ant target="clean-EndRegistrarTelcoService-event"/>
+        <ant target="clean-Registrar-sbb"/>
+        <ant target="clean-registrar-DU"/>
+    </target>
+    <target depends="init" name="build-EndRegistrarTelcoService-event">
+        <mkdir dir="classes/EndRegistrarTelcoService-event"/>
+        <mkdir dir="jars/"/>
+        <javac destdir="classes/EndRegistrarTelcoService-event" includeantruntime="false"
+            includes="org/telcomp/events/EndRegistrarTelcoServiceEvent.java" srcdir="src">
+            <classpath>
+                <path refid="slee"/>
+            </classpath>
+        </javac>
+        <eventjar classpath="classes/EndRegistrarTelcoService-event"
+            destfile="jars/EndRegistrarTelcoService-event.jar" eventjarxml="src/org/telcomp/events/EndRegistrarTelcoService-event-jar.xml"/>
+    </target>
+    <target name="clean-EndRegistrarTelcoService-event">
+        <delete file="jars/EndRegistrarTelcoService-event.jar"/>
+        <delete dir="classes/EndRegistrarTelcoService-event"/>
+    </target>
+    <target depends="init" name="build-Registrar-sbb">
+        <mkdir dir="classes/Registrar-sbb"/>
+        <mkdir dir="jars/"/>
+        <javac destdir="classes/Registrar-sbb" includeantruntime="false"
+            includes="org/telcomp/sbb/RegistrarSbb.java" srcdir="src">
+            <classpath>
+                <path refid="path-Registrar-sbb"/>
+                <path refid="ExternalComponents"/>
+                <path refid="slee"/>
+            </classpath>
+        </javac>
+    	<sbbjar classpath="classes/Registrar-sbb"
+    	            destfile="jars/Registrar-sbb.jar" sbbjarxml="src/org/telcomp/sbb/Registrar-sbb-jar.xml"/>
+    </target>
+    <target name="clean-Registrar-sbb">
+        <delete file="jars/Registrar-sbb.jar"/>
+        <delete dir="classes/Registrar-sbb"/>
+    </target>
+    <target depends="build-EndRegistrarTelcoService-event" name="build-registrar-DU">
+        <mkdir dir="classes/registrar-DU"/>
+        <copy
+            file="src/org/telcomp/service/registrar-deployable-unit.xml" tofile="classes/registrar-DU/deployable-unit.xml"/>
+        <jar jarfile="jars/registrar-DU.jar">
+            <metainf dir="classes/registrar-DU" includes="deployable-unit.xml"/>
+            <fileset dir="" includes="jars/Registrar-sbb.jar"/>
+            <fileset dir="" includes="jars/EndRegistrarTelcoService-event.jar"/>
+            <fileset dir="." includes="src/org/telcomp/service/registrar-service.xml"/>
+        </jar>
+    </target>
+    <target name="clean-registrar-DU">
+        <delete file="jars/registrar-DU.jar"/>
+        <delete dir="classes/registrar-DU"/>
+    </target>
+</project>

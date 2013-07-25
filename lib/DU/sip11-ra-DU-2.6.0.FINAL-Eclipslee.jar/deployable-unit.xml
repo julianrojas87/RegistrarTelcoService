@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE deployable-unit PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE Deployable Unit 1.1//EN" "http://java.sun.com/dtd/slee-deployable-unit_1_1.dtd">
+<deployable-unit>
+	<jar>jars/sip11-ratype-2.6.0.FINAL.jar</jar>
+	<jar>jars/sip11-ra-2.6.0.FINAL.jar</jar>
+	<jar>jars/sip11-events-2.6.0.FINAL.jar</jar>
+	<jar>jars/sip11-library-2.6.0.FINAL.jar</jar>
+</deployable-unit>
