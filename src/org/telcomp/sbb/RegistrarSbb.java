@@ -35,6 +35,9 @@ public abstract class RegistrarSbb implements javax.slee.Sbb {
 	private NullActivityContextInterfaceFactory nullACIFactory;
 
 	public void onRegister(RequestEvent event, ActivityContextInterface aci) {
+		System.out.println("*******************************************");
+		System.out.println("RegistrarTelcoService Invoked");
+		
 		this.setUserActivity(aci);
 		Request request = event.getRequest();
 		ContactHeader contactHeader = (ContactHeader)request.getHeader(ContactHeader.NAME);
@@ -76,6 +79,9 @@ public abstract class RegistrarSbb implements javax.slee.Sbb {
 					operationInputs.put("operation", (String) "register");
 					EndRegistrarTelcoServiceEvent endRegistrar = new EndRegistrarTelcoServiceEvent(operationInputs);
 					this.fireEndRegistrarTelcoServiceEvent(endRegistrar, nullAci, null);
+					System.out.println("Output UserID = "+this.getUserId());
+					System.out.println("Output Operation = Register");
+					System.out.println("*******************************************");
 				} else {
 					this.respondUserAgent(Response.NOT_FOUND);
 				}
@@ -89,6 +95,9 @@ public abstract class RegistrarSbb implements javax.slee.Sbb {
 				operationInputs.put("operation", (String) "unregister");
 				EndRegistrarTelcoServiceEvent endRegistrar = new EndRegistrarTelcoServiceEvent(operationInputs);
 				this.fireEndRegistrarTelcoServiceEvent(endRegistrar, nullAci, null);
+				System.out.println("Output UserID = "+this.getUserId());
+				System.out.println("Output Operation = Unregister");
+				System.out.println("*******************************************");
 			}
 		}
 		aci.detach(this.sbbContext.getSbbLocalObject());
